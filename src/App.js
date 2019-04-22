@@ -21,13 +21,6 @@ class App extends Component {
 		this.props.fetchConfiguration();
 	}
 
-	componentDidUpdate(prevProps, prevState){
-		// If searchForm has been completed show the SearchResults:
-		if(prevProps.searchResults !== this.props.searchResults) {
-			this.setState({showSearchResults : true, showMainForm : false});
-		}
-	}
-
 	render() {
 	    return (
 	    	<React.Fragment>
