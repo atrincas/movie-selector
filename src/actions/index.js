@@ -111,47 +111,27 @@ export const fetchMovieTrailer = (id) => {
 	}
 };
 
-export const fetchPopularMovies = () => {
-
+export const fetchCarouselMovies = () => {
+	
 	const ApiKey = process.env.REACT_APP_API_KEY;
 
-	const Url = `https://api.themoviedb.org/3/movie/popular?api_key=${ApiKey}&language=en-US&page=1`;
-	
+	const urls = [`https://api.themoviedb.org/3/movie/upcoming?api_key=${ApiKey}&language=en-US&page=1`, 
+				`https://api.themoviedb.org/3/movie/top_rated?api_key=${ApiKey}&language=en-US&page=1`,
+				`https://api.themoviedb.org/3/movie/popular?api_key=${ApiKey}&language=en-US&page=1`];
+
+	const promises = urls.map(url => axios.get(url));
+
 	return (dispatch) => {
-		axios.get(Url)
-			.then( response => {
-				return dispatch({type : 'FETCH_POPULAR_MOVIES', payload: response.data.results});
+		Promise.all(promises).then(([upcoming, toprated, popular]) => {
+			dispatch({ 
+				type: 'FETCH_CAROUSEL_MOVIES', 
+				payload: {
+				upcoming: upcoming.data.results,
+				toprated: toprated.data.results,
+				popular: popular.data.results
+				}
 			})
+		})
 	}
-	
-};
 
-export const fetchTopRatedMovies = () => {
-
-	const ApiKey = process.env.REACT_APP_API_KEY;
-
-	const Url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${ApiKey}&language=en-US&page=1`;
-	
-	return (dispatch) => {
-		axios.get(Url)
-			.then( response => {
-				return dispatch({type : 'FETCH_TOP_RATED_MOVIES', payload: response.data.results});
-			})
-	}
-	
-};
-
-export const fetchUpcomingMovies = () => {
-
-	const ApiKey = process.env.REACT_APP_API_KEY;
-
-	const Url = `https://api.themoviedb.org/3/movie/upcoming?api_key=${ApiKey}&language=en-US&page=1`;
-	
-	return (dispatch) => {
-		axios.get(Url)
-			.then( response => {
-				return dispatch({type : 'FETCH_UPCOMING_MOVIES', payload: response.data.results});
-			})
-	}
-	
-};
+}
